@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    # We use a slim, fast version of Postgres
+    image: postgres:15-alpine
+    container_name: assignment_postgres
+    
+    # This pulls the variables you defined in your .env file
+    env_file:
+      - .env
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      # CRITICAL: This copies your seed.sql into a special Postgres folder.
+      # Any .sql file here is executed automatically on the FIRST start.
+      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
+      
+      # This ensures your data stays safe even if you stop the container.
+      - postgres_data:/var/lib/postgresql/data
+
+# This tells Docker to set aside space on your hard drive for the DB
+volumes:
+  postgres_data:
